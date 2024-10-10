@@ -10,6 +10,7 @@ const Container = styled.View`
 `
 
 export default function Rating({ rating }) {
+  
   const totalOfFullStars = Math.floor(rating / 2);
   const starOutlineArray = Array(5 - totalOfFullStars).fill('star-outline');
   const fullStarArray = Array(totalOfFullStars).fill('star')
@@ -18,7 +19,7 @@ export default function Rating({ rating }) {
   return (
     <Container>
       {ratingStars.map((icon, index) => {
-        return <AntDesign key={index} name={icon} size={16} color="gray" />;
+        return <MaterialCommunityIcons key={index} name={icon} size={16} color="gray" />;
       })}
     </Container>
   );
