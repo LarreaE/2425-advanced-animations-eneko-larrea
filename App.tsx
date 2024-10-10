@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import { FlatList } from "react-native";
+import React, {useState, useEffect, useRef} from "react";
+import { FlatList , Animated} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import styled from "styled-components/native";
@@ -43,6 +43,11 @@ const PosterDescription = styled.Text`
     font-size: 12px;
 `
 
+const DummyContainer = styled.View`
+    width: ${CONSTANTS.SPACER_ITEM_SIZE}px;
+`
+const scrollX = useRef(new Animated.Value(0)).current
+
 export default function App() {
 
     const [movies, setMovies] = useState([]);
@@ -50,7 +55,7 @@ export default function App() {
     useEffect(() => {
         const fetchData = async () => {
             const data = await getMovies()
-            setMovies(data)
+            setMovies([{ key: 'left-spacer'}, ...data, {key: 'right-spacer'}])
             setLoaded(true)
         }
         fetchData()
@@ -66,18 +71,39 @@ export default function App() {
     return (
         <Container>
             <StatusBar />
-            <FlatList
+            <Animated.FlatList
+                onScroll={Animated.event(
+                    [{nativeEvent: {contentOffset: {x: scrollX}}}],
+                    {useNativeDriver: true}
+                )}
+                scrollEventThrottle={16}
                 showsHorizontalScrollIndicator={false}
                 data={movies}
                 keyExtractor={item => item.key}
                 horizontal
+                snapToInterval={CONSTANTS.ITEM_SIZE}
+                decelerationRate={0}
                 contentContainerStyle={{
                     alignItems: 'center'
                 }}
-                renderItem={({item}) => {
+                renderItem={({item, index}) => {
+
+                    const inputRange = [
+                        (index - 2) * CONSTANTS.ITEM_SIZE,
+                        (index - 1) * CONSTANTS.ITEM_SIZE,
+                        index * CONSTANTS.ITEM_SIZE,
+
+                    ]
+                    const translateY = scrollX.interpolate({
+                        inputRange,
+                        outputRange: [0,-50,0]
+                    })
+                    if (!item.title) {
+                        return <DummyContainer />
+                    }
                     return (
                         <PosterContainer>
-                            <Poster>
+                            <Poster as={Animated.View} style={{transform:  [{translateY}]}}>
                                 <PosterImage source={{uri: item.posterPath}} />
                                 <PosterTitle numberOfLines={1}>{item.title}</PosterTitle>
                                 <Rating rating={item.rating} />
