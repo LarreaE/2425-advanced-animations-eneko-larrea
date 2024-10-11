@@ -73,10 +73,22 @@ const BackdropImage = styled.Image`
 `
 const scrollX = useRef(new Animated.Value(0)).current
 
+interface Movies {
+    key: String,
+    title: String,
+    posterPath: String,
+    backdropPath: String,
+    rating: Number,
+    description: String,
+    releaseDate: Date,
+    genres: [],
+}
+
 export default function App() {
 
-    const [movies, setMovies] = useState([]);
+    const [movies, setMovies] = useState<Movies[]>([]);
     const [loaded, setLoaded] = useState(false);
+    
     useEffect(() => {
         const fetchData = async () => {
             const data = await getMovies()
