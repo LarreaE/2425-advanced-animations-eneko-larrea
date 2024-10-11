@@ -26,7 +26,7 @@ export const getMovies = async () => {
             rating: vote_average,
             description: overview,
             releaseDate: release_date,
-            genres: genre_ids.map((id) => GENRES[id]),
+            genres: genre_ids.map((id: string | number) => GENRES[id]),
         })
         );
     

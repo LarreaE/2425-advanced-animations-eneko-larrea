@@ -16,6 +16,7 @@ const GenreContainer = styled.View`
 const Text = styled.Text`
     opacity: 0.5;
     font-size: 8px;
+    color: white;
 `
 
 const Genre = ({ genres }) => {

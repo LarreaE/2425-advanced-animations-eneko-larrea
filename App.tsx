@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, FC } from "react";
 import { FlatList, Animated, View, Image, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
@@ -71,10 +71,26 @@ const BackdropImage = styled.Image`
   height: ${CONSTANTS.BACKDROP_HEIGHT}px;
 `;
 
+interface Movies {
+    key: String,
+    title: String,
+    posterPath: String,
+    backdropPath: String,
+    rating: Number,
+    description: String,
+    releaseDate: Date,
+    genres: [],
+}
+
+interface BackDrop {
+    movies: Movies[],
+    scrollX: any,
+}
+
 const scrollX = useRef(new Animated.Value(0)).current;
 
 export default function App() {
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState<Movies[]>([]);
   const [loaded, setLoaded] = useState(false);
   
   useEffect(() => {
@@ -90,7 +106,7 @@ export default function App() {
     'Syne-Mono': require('./assets/fonts/SyneMono-Regular.ttf'),
   });
 
-  const Backdrop = ({ movies, scrollX }) => {
+  const Backdrop: FC<BackDrop> = ({ movies, scrollX }) => {
     return (
       <ContentContainer>
         <FlatList 
@@ -130,7 +146,7 @@ export default function App() {
     );
   };
 
-  if (!loaded) {
+  if (!loaded || !fontLoaded) {
     return <PosterDescription>App Loading...</PosterDescription>;
   }
 
